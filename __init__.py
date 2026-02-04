@@ -54,7 +54,10 @@ New in v1.3.0:
 New in v1.4.0:
     - Support for multiple export formats simultaneously
     - Removed -o/--output flag
+
+New in v1.4.1:
+    Fixed none frame count issue in proxyadv mode 
 """
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 __author__ = 'userprojekt'

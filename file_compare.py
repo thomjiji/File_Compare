@@ -1,10 +1,3 @@
-"""
-File_Compare
-A Python command-line tool for comparing files between directories, with special support for video file proxy workflows
-"""
-__version__ = "1.4.1"
-__author__ = 'userprojekt'
-
 import os
 import sys
 import argparse
