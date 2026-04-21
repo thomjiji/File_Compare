@@ -95,37 +95,49 @@ uv run fcmp -a /Volumes/Originals -b /Volumes/Proxies -m proxy
 uv run fcmp -a /Volumes/Originals -b /Volumes/Proxies -m proxy-frames -f html
 ```
 
-## Prefer the shell?
+## Real-World Scenarios
 
-The core of fcmp is a sorted filename set diff. If you live in a terminal,
-`find` + `sort` + `comm` covers most of the job without installing anything.
-
-**Normal mode** — relative paths present in A, missing from B:
-
+**Video Production Workflow:**
 ```sh
-comm -23 <(cd /src && find . -type f | sort) \
-         <(cd /dst && find . -type f | sort)
+# Compare original footage with proxy files
+python file_compare.py -m proxy -f html \
+  /Volumes/Storage/Originals \
+  /Volumes/EditDrive/Proxies
+
+# Compare original footage with proxy files and export to HTML and JSON
+python file_compare.py -m proxy -f html json \
+  /Volumes/Storage/Originals \
+  /Volumes/EditDrive/Proxies
+
+# Advanced verification with frame count checking
+python file_compare.py -m proxyadv -f html \
+  /Volumes/Storage/Originals \
+  /Volumes/EditDrive/Proxies
 ```
 
-**Proxy mode** — basename match ignoring extension, video files only
-(extend the extension list to taste):
-
+**Backup Verification:**
 ```sh
-list() {
-  find "$1" -type f | grep -Ei '\.(mp4|mov|mxf|mkv|avi|m4v)$' \
-    | sed 's|.*/||; s|\.[^.]*$||' | sort -u
-}
-comm -23 <(list /src) <(list /dst)
+# Verify backup across multiple drives
+python file_compare.py -f csv \
+  "/Volumes/Backup1+/Volumes/Backup2" \
+  /Volumes/Master
 ```
 
-**Proxy-frames mode** — the frame-count cross-check needs a `mediainfo`
-call per file plus a join across differing extensions. Doable in shell but
-becomes a script at that point; this is where fcmp earns its keep.
+**Multi-Location Archive:**
+```sh
+# Compare files from multiple archive locations
+python file_compare.py -f json \
+  "/Archive/2024/Q1+/Archive/2024/Q2+/Archive/2024/Q3" \
+  /CurrentProjects
+```
 
-What fcmp adds on top of the pipes: multi-directory groups per side
-(`-a A1 A2 A3`), auto-skip of OS cruft (`.DS_Store`, `@eaDir`,
-`$RECYCLE.BIN`, `Thumbs.db`, …), HTML/CSV/JSON reports, and the
-proxy-frames verification. If none of those matter, the shell is fine.
+**Quality Control for Proxy Encoding:**
+```sh
+# Verify all proxies are complete (not truncated)
+python file_compare.py -m proxyadv -f html \
+  /Production/Camera_Originals \
+  /Production/Proxies
+```
 
 ## Project layout
 
