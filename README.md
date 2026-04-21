@@ -1,13 +1,21 @@
 # fcmp
 
-Compare two directory trees (or groups of directories) for parity. Built for
-video proxy workflows, but works for any backup / mirror verification job.
+Check that every file in the source directory tree also exists in the
+destination, by comparing filenames across the nested hierarchy.
 
-- **Normal mode** — compare by filename (name + extension)
-- **Proxy mode** — compare video files by basename, ignoring extension
-- **Proxy-frames mode** — proxy mode plus frame-count verification via
-  [mediainfo](https://mediaarea.net/en/MediaInfo), to catch incomplete or
-  corrupted proxies
+Built for verifying transcode jobs: after producing proxies from source clips,
+confirm no clip was dropped. In a long-running session, corrupted clips can be
+skipped silently — this catches those gaps.
+
+> **fcmp does not verify file contents.** Matching is filename-based; there are no
+> checksums or hashes. `proxy-frames` mode adds a frame-count check via [mediainfo](https://mediaarea.net/en/MediaInfo)
+> to flag truncated or corrupted proxies, which is still a metadata check, never
+> byte-level. For true backup or mirror integrity, reach for `rsync -c`, `shasum`,
+> or a dedicated dedupe/verification tool.
+
+- **Normal mode** — match by filename (name + extension)
+- **Proxy mode** — match video files by basename, ignoring extension
+- **Proxy-frames mode** — proxy mode plus frame-count verification
 
 Exports to JSON, TXT, CSV, or HTML (or any combination in a single run).
 
@@ -22,6 +30,7 @@ Exports to JSON, TXT, CSV, or HTML (or any combination in a single run).
   brew install mediainfo
 
   # Linux
+  
   sudo apt-get install mediainfo
 
   # Windows
@@ -37,8 +46,8 @@ uv sync
 ```
 
 `uv sync` creates a virtualenv at `.venv/` and installs the package plus its
-dependencies. The `fcmp` command is available via `uv run fcmp ...` or by
-activating the venv.
+dependencies. The `fcmp` command is available via `uv run fcmp ...` or by activating
+the venv.
 
 ## Usage
 
